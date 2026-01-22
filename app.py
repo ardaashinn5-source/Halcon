@@ -1,13 +1,6 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
-import os
-
-from flask_cors import CORS
-CORS(app)
 
 app = Flask(__name__)
-
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 @app.route("/")
 def home():
@@ -15,15 +8,15 @@ def home():
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    data = request.json
-    user_text = data.get("text", "")
+    data = request.get_json()
+    text = data.get("text", "")
 
-    response = client.chat.completions.create(
-        model="gpt-4.1",
-        messages=[
-            {"role": "system", "content": "Sen HALCON adında, Türkçe konuşan bir yapay zeka asistansın."},
-            {"role": "user", "content": user_text}
-        ]
-    )
+    if not text:
+        return jsonify({"answer": "Bir şey duyamadım"}), 400
 
-    return jsonify({"answer": response.choices[0].message.content})
+    return jsonify({
+        "answer": f"Seni duydum. '{text}' dedin."
+    })
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
