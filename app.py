@@ -1,22 +1,21 @@
+import os
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     return "HALCON aktif"
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    data = request.get_json()
+    data = request.get_json(force=True)
     text = data.get("text", "")
 
-    if not text:
-        return jsonify({"answer": "Bir şey duyamadım"}), 400
-
     return jsonify({
-        "answer": f"Seni duydum. '{text}' dedin."
+        "answer": f"Seni duydum: {text}"
     })
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
