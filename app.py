@@ -23,8 +23,4 @@ def ask():
         ]
     )
 
-    answer = response.choices[0].message.content
-    return jsonify({"answer": answer})
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    return jsonify({"answer": response.choices[0].message.content})
